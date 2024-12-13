@@ -5,6 +5,7 @@ from tcod.context import Context
 from entity import Entity
 from game_map import GameMap
 from input_handlers import EventHandler
+from tcod.map import compute_fov
 
 
 class Engine:
@@ -17,6 +18,18 @@ class Engine:
         self.entities = entities
         self.player = player
 
+        self.update_fov()
+
+    def update_fov(self) -> None:
+        # 实时
+        self.game_map.visible[:] = compute_fov(
+            self.game_map.tiles["transparent"],
+            (self.player.x, self.player.y),
+            radius=8
+        )
+        # 累加
+        self.game_map.explored |= self.game_map.visible
+
     def handle_events(self, events: Iterator[Any]):
         """事件处理"""
 
@@ -26,12 +39,16 @@ class Engine:
                 continue
             action.perform(self, self.player)
 
+            self.update_fov()
+
     def render(self, console: Console, context: Context) -> None:
         """渲染 实体"""
         self.game_map.render(console)
 
         for entity in self.entities:
-            console.print(entity.x, entity.y, entity.char, fg=entity.color)
+            # Only print entities that are in the FOV
+            if self.game_map.visible[entity.x, entity.y]:
+                console.print(entity.x, entity.y, entity.char, fg=entity.color)
 
         context.present(console)
 
