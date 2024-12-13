@@ -1,10 +1,8 @@
 import tcod
-
-from actions import MovementAction, EscapeAction
 from engine import Engine
 from entity import Entity
-from game_map import GameMap
 from input_handlers import EventHandler
+from procgen import generate_dungeon
 
 
 def main():
@@ -19,7 +17,12 @@ def main():
 
     map_width = 80
     map_height = 45
-    game_map = GameMap(map_width, map_height)
+
+    room_max_size = 10
+    room_min_size = 6
+    max_rooms = 30
+
+    game_map = generate_dungeon(max_rooms, room_min_size, room_max_size, map_width, map_height, player)
 
     # 初始engine
     engine = Engine(entities=entities, event_handler=event_handler, game_map=game_map, player=player)
