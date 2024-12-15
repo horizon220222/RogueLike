@@ -1,11 +1,7 @@
 import copy
-
 import tcod
-
 import entity_factories
 from engine import Engine
-from entity import Entity
-from input_handlers import EventHandler
 from procgen import generate_dungeon
 
 
