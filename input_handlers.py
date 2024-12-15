@@ -1,10 +1,29 @@
-from typing import Optional
+from typing import Optional, TYPE_CHECKING
 import tcod.event
 from actions import Action, EscapeAction, BumpAction
+
+if TYPE_CHECKING:
+    from engine import Engine
 
 
 class EventHandler(tcod.event.EventDispatch[Action]):
     """将事件 映射成 动作"""
+
+    def __init__(self, engine: "Engine"):
+        self.engine = engine
+
+    def handle_events(self):
+        """事件处理"""
+        for event in tcod.event.wait():
+            action = self.dispatch(event)
+
+            if action is None:
+                continue
+
+            action.perform()
+
+            self.engine.__handle_enemy_turns__()
+            self.engine.__update_fov__()
 
 
     def ev_quit(self, event: tcod.event.Quit) ->  Optional[Action]:
@@ -15,15 +34,17 @@ class EventHandler(tcod.event.EventDispatch[Action]):
 
         key = event.sym
 
+        player = self.engine.player
+
         if key == tcod.event.KeySym.UP:
-            action = BumpAction(dx=0, dy=-1)
+            action = BumpAction(player, dx=0, dy=-1)
         elif key == tcod.event.KeySym.DOWN:
-            action = BumpAction(dx=0, dy=1)
+            action = BumpAction(player, dx=0, dy=1)
         elif key == tcod.event.KeySym.LEFT:
-            action = BumpAction(dx=-1, dy=0)
+            action = BumpAction(player, dx=-1, dy=0)
         elif key == tcod.event.KeySym.RIGHT:
-            action = BumpAction(dx=1, dy=0)
+            action = BumpAction(player, dx=1, dy=0)
         elif key == tcod.event.KeySym.ESCAPE:
-            action = EscapeAction()
+            action = EscapeAction(player)
 
         return action
