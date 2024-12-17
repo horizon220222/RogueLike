@@ -1,5 +1,7 @@
 import copy
 import tcod
+
+import color
 import entity_factories
 from engine import Engine
 from procgen import generate_dungeon
@@ -31,6 +33,10 @@ def main():
     )
     engine.__update_fov__()
 
+    engine.message_log.add_message(
+        "Hello and welcome, adventurer, to yet another dungeon!", color.welcome_text
+    )
+
     # 绘制屏幕
     tileset = tcod.tileset.load_tilesheet(
         "dejavu10x10_gs_tc.png", 32, 8, tcod.tileset.CHARMAP_TCOD
@@ -44,8 +50,11 @@ def main():
     ) as context:
         root_console = tcod.console.Console(screen_width, screen_height, order="F")
         while True:
-            engine.render(console=root_console, context=context)
-            engine.event_handler.handle_events()
+            root_console.clear()
+            engine.event_handler.on_render(console=root_console)
+            context.present(root_console)
+
+            engine.event_handler.handle_events(context=context)
 
 
 if __name__ == '__main__':
