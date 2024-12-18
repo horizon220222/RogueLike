@@ -32,6 +32,9 @@ class GameMap:
             entity for entity in self.entities if isinstance(entity, Actor) and entity.is_alive
         )
 
+    @property
+    def gamemap(self) -> "GameMap":
+        return self
 
     def get_blocking_entity_at_location(self, location_x: int, location_y: int) -> Optional["Entity"]:
         for entity in self.entities:

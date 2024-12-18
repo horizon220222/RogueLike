@@ -1,5 +1,7 @@
 from typing import TYPE_CHECKING
 from tcod.console import Console
+
+import exceptions
 from entity import Actor
 from game_map import GameMap
 from tcod.map import compute_fov
@@ -37,7 +39,10 @@ class Engine:
 
         for entity in self.game_map.entities - {self.player}:
             if entity.ai:
-                entity.ai.perform()
+                try:
+                    entity.ai.perform()
+                except exceptions.Impossible:
+                    pass
 
 
     def render(self, console: Console) -> None:
