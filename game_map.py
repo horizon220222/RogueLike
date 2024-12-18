@@ -2,7 +2,7 @@ import numpy as np
 from tcod.console import Console
 import tile_types
 from typing import Iterable, TYPE_CHECKING, Optional
-from entity import Actor
+from entity import Actor, Item
 
 if TYPE_CHECKING:
     from engine import Engine
@@ -33,6 +33,12 @@ class GameMap:
         )
 
     @property
+    def items(self) -> Iterable[Item]:
+        yield from (
+            entity for entity in self.entities if isinstance(entity, Item)
+        )
+
+    @property
     def gamemap(self) -> "GameMap":
         return self
 
@@ -49,7 +55,6 @@ class GameMap:
                 return actor
 
         return None
-
 
     def in_bounds(self, x:int,y:int) -> bool:
         return 0 <= x < self.width and 0 <= y < self.height

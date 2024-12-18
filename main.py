@@ -24,6 +24,7 @@ def main():
     room_min_size = 6
     max_rooms = 30
     max_monsters_per_room = 2
+    max_items_per_room = 2
     engine.game_map = generate_dungeon(
         max_rooms=max_rooms,
         room_min_size=room_min_size,
@@ -31,6 +32,7 @@ def main():
         map_width=map_width,
         map_height=map_height,
         max_monsters_per_room=max_monsters_per_room,
+        max_items_per_room=max_items_per_room,
         engine=engine
     )
     engine.__update_fov__()

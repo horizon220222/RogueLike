@@ -38,7 +38,7 @@ class Engine:
         """怪物回合"""
 
         for entity in self.game_map.entities - {self.player}:
-            if entity.ai:
+            if hasattr(entity, "ai") and entity.ai:
                 try:
                     entity.ai.perform()
                 except exceptions.Impossible:
