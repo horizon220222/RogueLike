@@ -1,4 +1,5 @@
 import copy
+import math
 from typing import Tuple, TypeVar, TYPE_CHECKING, Optional, Type, Union
 
 from components.inventor import Inventory
@@ -66,6 +67,10 @@ class Entity:
                     self.gamemap.entities.remove(self)
             self.parent = gamemap
             gamemap.entities.add(self)
+
+    def distance(self, x:int, y:int) -> float:
+        return math.sqrt((x - self.x) ** 2 + (y - self.y) ** 2)
+
 
     def move(self, dx: int, dy: int) -> None:
         self.x += dx
