@@ -7,11 +7,11 @@ from render_order import RenderOrder
 class Fighter(BaseComponent):
     parent: Actor
 
-    def __init__(self, hp: int, defense: int, powser: int):
+    def __init__(self, hp: int, defense: int, power: int):
         self.max_hp = hp
         self._hp = hp
         self.defense = defense # 防御
-        self.powser = powser # 攻击
+        self.power = power # 攻击
 
     @property
     def hp(self) -> int:
@@ -57,5 +57,7 @@ class Fighter(BaseComponent):
         self.parent.render_order = RenderOrder.CORPSE
 
         self.engine.message_log.add_message(death_message, death_message_color)
+
+        self.engine.player.level.add_xp(self.parent.level.xp_given)
 
 

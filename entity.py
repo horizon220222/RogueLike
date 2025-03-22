@@ -3,6 +3,7 @@ import math
 from typing import Tuple, TypeVar, TYPE_CHECKING, Optional, Type, Union
 
 from components.inventor import Inventory
+from components.level import Level
 from render_order import RenderOrder
 
 if TYPE_CHECKING:
@@ -89,7 +90,8 @@ class Actor(Entity):
             name: str = "<Unnamed>",
             ai_cls: Type["BaseAI"],
             fighter: "Fighter",
-            inventory: Inventory
+            inventory: Inventory,
+            level:Level
     ):
         super().__init__(
             x=x,
@@ -108,6 +110,9 @@ class Actor(Entity):
 
         self.inventory = inventory
         self.inventory.parent = self
+
+        self.level = level
+        self.level.parent = self
 
     @property
     def is_alive(self) -> bool:
