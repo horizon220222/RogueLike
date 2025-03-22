@@ -1,9 +1,6 @@
 import copy
 import math
 from typing import Tuple, TypeVar, TYPE_CHECKING, Optional, Type, Union
-
-from components.inventor import Inventory
-from components.level import Level
 from render_order import RenderOrder
 
 if TYPE_CHECKING:
@@ -11,6 +8,10 @@ if TYPE_CHECKING:
     from components.fighter import Fighter
     from game_map import GameMap
     from components.consumable import Consumable
+    from components.equippable import Equippable
+    from components.equipment import Equipment
+    from components.inventor import Inventory
+    from components.level import Level
 
 T = TypeVar("T", bound="Entity")
 
@@ -19,7 +20,7 @@ class Entity:
     """
     A generic object to represent players, enemies, items, etc.
     """
-    parent: Union["GameMap", Inventory]
+    parent: Union["GameMap", "Inventory"]
 
     def __init__(
             self,
@@ -89,9 +90,10 @@ class Actor(Entity):
             color: Tuple[int, int, int] = (255, 255, 255),
             name: str = "<Unnamed>",
             ai_cls: Type["BaseAI"],
+            equipment: "Equipment",
             fighter: "Fighter",
-            inventory: Inventory,
-            level:Level
+            inventory: "Inventory",
+            level:"Level",
     ):
         super().__init__(
             x=x,
@@ -104,6 +106,9 @@ class Actor(Entity):
         )
 
         self.ai: Optional[BaseAI] = ai_cls(self)
+
+        self.equipment: Equipment = equipment
+        self.equipment.parent = self
 
         self.fighter = fighter
         self.fighter.parent = self
@@ -129,7 +134,8 @@ class Item(Entity):
         char: str = "?",
         color: Tuple[int, int, int] = (255, 255, 255),
         name: str = "<Unnamed>",
-        consumable: "Consumable"
+        consumable: Optional["Consumable"] = None,
+        equippable: Optional["Equippable"] = None,
     ):
         super().__init__(
             x=x,
@@ -142,4 +148,9 @@ class Item(Entity):
         )
 
         self.consumable = consumable
-        self.consumable.parent = self
+        if consumable:
+            self.consumable.parent = self
+
+        self.equippable = equippable
+        if equippable:
+            self.equippable.parent = self
